@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SCMP Copy Sandbox</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#001246; --action:#2c4692; --marigold:#ffca05; --line:#d7dbe0; --muted:#6b7280; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; background:#eceef1; color:#1a1d24;
+    font-family:"Roboto",system-ui,sans-serif; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+  .wrap { max-width: 720px; width:100%; }
+  .head { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .marks { display:inline-flex; gap:2px; }
+  .marks i { width:10px; height:20px; display:block; }
+  .marks i:first-child{ background:var(--marigold);} .marks i:last-child{ background:var(--navy);}
+  h1 { font-family:"Merriweather",serif; color:var(--navy); font-size:24px; margin:0; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 28px; line-height:1.5; }
+  .grid { display:grid; gap:16px; grid-template-columns:1fr 1fr; }
+  @media (max-width:560px){ .grid{ grid-template-columns:1fr; } }
+  a.card { display:block; background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px;
+    text-decoration:none; color:inherit; box-shadow:0 1px 3px rgba(16,24,40,.06); transition:box-shadow .15s, transform .15s; }
+  a.card:hover { box-shadow:0 8px 24px rgba(16,24,40,.12); transform:translateY(-2px); }
+  a.card.soon { opacity:.55; pointer-events:none; }
+  .card h2 { font-size:16px; margin:0 0 6px; }
+  .card p { font-size:13px; color:var(--muted); margin:0; line-height:1.5; }
+  .pill { display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; margin-bottom:10px; }
+  .pill.live { background:#e7f6ee; color:#067647; }
+  .pill.soon { background:#eef0f3; color:#6b7280; }
+  .note { margin-top:28px; font-size:12px; color:var(--muted); line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head"><span class="marks"><i></i><i></i></span><h1>Copy Sandbox</h1></div>
+    <p class="sub">Live, editable replicas of SCMP subscriber surfaces. Change the price and copy right in the browser, watch it reflow at every screen size, and export a clean PNG for approval decks — no Figma seat needed.</p>
+
+    <div class="grid">
+      <a class="card" href="subscription.html">
+        <span class="pill live">Live</span>
+        <h2>Subscription page</h2>
+        <p>Hero, plan cards, pricing, benefits and payment options. Responsive: mobile · tablet · desktop.</p>
+      </a>
+      <a class="card soon">
+        <span class="pill soon">Coming next</span>
+        <h2>Paywall</h2>
+        <p>The in-article paywall overlay. Add its Figma frame and it slots in here.</p>
+      </a>
+    </div>
+
+    <p class="note">
+      <b>How to use:</b> click any text to edit it · a counter shows the character count and turns red past its budget ·
+      keep <b>Fit warnings</b> on to catch copy that no longer fits · use the device buttons or drag the right edge to test widths ·
+      hit <b>Download PNG</b> for a deck-ready screenshot. Edits autosave in your browser; <b>Reset copy</b> restores the original.
+    </p>
+  </div>
+</body>
+</html>

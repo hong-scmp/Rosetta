@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SCMP Copy Sandbox — Subscription page</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/sandbox-ui.css" />
+<link rel="stylesheet" href="assets/marks.css" />
+
+<style>
+  /* =========================================================
+     Subscription page — faithful to Figma "Subscription page"
+     (file phRi68xyO6QtunSOsv0QTs). Responsive via CONTAINER
+     queries so the preview reflows to its own width — resize
+     the frame (or the browser) and copy flows exactly.
+     Breakpoints: <768 mobile · 768–1023 tablet · ≥1024 desktop
+     ========================================================= */
+  .scmp {
+    container-type: inline-size;
+    --navy: #001246;
+    --marigold: #ffca05;
+    --action: #2c4692;
+    --light-action: #556bb4;
+    --grey250: #cccccc;
+    --grey500: #888888;
+    --grey700: #666666;
+    --grey800: #404040;
+    --serif: "Merriweather", Georgia, "Times New Roman", serif;
+    --sans: "Roboto", system-ui, -apple-system, sans-serif;
+    --cond: "Roboto Condensed", "Roboto", sans-serif;
+    font-family: var(--sans);
+    color: #000;
+    background: #fff;
+    line-height: 1.3;
+  }
+  .scmp *, .scmp *::before, .scmp *::after { box-sizing: border-box; }
+  .scmp p { margin: 0; }
+
+  /* ---------------- header ---------------- */
+  .scmp-hdr {
+    display: flex; align-items: center; gap: 12px;
+    min-height: 56px; padding: 0 16px;
+  }
+  .scmp-logo { display: flex; align-items: center; }
+  .scmp-logo-img { display: block; height: 15px; width: auto; }   /* inline SVG → stays crisp in the PNG export */
+
+  .scmp-nav { display: none; gap: 32px; margin-right: 36px; }
+  .scmp-nav .nav-item { font-family: var(--cond); font-weight: 400; font-size: 14px; color: var(--navy); opacity: .5; text-transform: uppercase; }
+  .scmp-nav .nav-item.active { font-weight: 700; color: var(--action); opacity: 1; }
+
+  .scmp-hdr .spacer { flex: 1; }
+  .scmp-signin {
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    font-size: 14px; color: var(--action);
+    border: 1px solid var(--action); border-radius: 2px; padding: 4px 8px; background: #fff;
+  }
+  .scmp-burger { width: 22px; height: 16px; display: inline-flex; flex-direction: column; justify-content: space-between; }
+  .scmp-burger i { height: 2px; background: var(--navy); border-radius: 2px; display: block; }
+
+  /* ---------------- hero ----------------
+     Type + column widths are FLUID (container-query units) so copy flows
+     with no snap across breakpoints. Sizes are anchored to the Figma frames:
+     headline 28 (≤767) → 32 (1023) → 40 (1440); text column 296 (768) →
+     392 (1023) → 480 (1440). Mobile is single-column, centered. */
+  .scmp-hero {
+    display: flex; flex-direction: column; gap: 24px;
+    max-width: 592px; margin: 0 auto; padding: 32px 16px 40px;   /* 560 content + 16 padding, like the 767 frame */
+  }
+  .scmp-text { display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+  .scmp-tagline { font-family: var(--serif); font-weight: 400; font-size: 16px; color: #000; }
+  .scmp-headline { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.25; color: #000; margin: 0; }
+  .scmp-subhead { font-family: var(--sans); font-weight: 400; font-size: 16px; line-height: 1.4; color: var(--grey700); max-width: 640px; }
+
+  .scmp-offer { display: flex; flex-direction: column; gap: 20px; }
+
+  /* cards */
+  .scmp-cards { display: flex; gap: 8px; align-items: stretch; }
+  .scmp-card {
+    position: relative; flex: 1 1 0; min-width: 0; cursor: pointer;
+    background: #fff; border: 1px solid var(--grey250); border-radius: 16px;
+    padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px;
+  }
+  /* border-box keeps the card's outer size constant, so selecting doesn't shift layout */
+  .scmp-card.is-selected { border: 4px solid var(--action); }
+  .scmp-tag {
+    align-self: flex-start; margin-left: 0;
+    font-family: var(--cond); font-weight: 700; font-size: 13px; line-height: 1.3;
+    color: #fff; background: var(--light-action);
+    padding: 2px 6px; border-radius: 0 0 4px 4px;
+  }
+  .scmp-tag.tag--save { background: var(--marigold); color: #000; }
+
+  .scmp-tier { display: flex; align-items: center; gap: 8px; }
+  .scmp-radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--grey500); flex: 0 0 auto; position: relative; cursor: pointer; }
+  .scmp-radio.on { border-color: var(--action); }
+  .scmp-radio.on::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--action); }
+  .scmp-tier-name { font-family: var(--sans); font-weight: 700; font-size: 16px; color: #000; }
+
+  .scmp-price-group { display: flex; flex-direction: column; gap: 4px; }
+  .scmp-price-row { display: flex; align-items: flex-start; gap: 4px; }
+  .scmp-price { font-family: var(--serif); font-weight: 700; font-size: 40px; line-height: 1; color: #000; }
+  .scmp-strike { font-family: var(--sans); font-weight: 400; font-size: 22px; color: var(--grey500); text-decoration: line-through; margin-top: 6px; }
+  .scmp-unit { font-family: var(--sans); font-size: 14px; line-height: 1.3; color: #000; }
+  .scmp-unit b { font-weight: 700; }
+  .scmp-fine { font-family: var(--sans); font-weight: 400; font-size: 12px; line-height: 1.3; color: var(--grey800); }
+  .scmp-fine b { font-weight: 700; }
+
+  /* cta */
+  .scmp-cta {
+    width: 100%; border: 0; cursor: default;
+    background: var(--action); color: #fff; border-radius: 8px;
+    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
+    font-size: 14px; letter-spacing: .3px; line-height: 1.2; padding: 12px 16px; text-align: center;
+  }
+  .cta-price { pointer-events: none; }   /* auto-generated from the selected plan */
+
+  /* benefits */
+  .scmp-benefits { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .scmp-benefits li { display: flex; align-items: flex-start; gap: 8px; }
+  .scmp-benefits .tick { width: 16.5px; height: 16.5px; flex: 0 0 auto; margin-top: 1px; }
+  .scmp-benefits span { font-family: var(--sans); font-size: 14px; line-height: 1.2; color: var(--grey700); }
+
+  /* payments */
+  .scmp-pays { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .scmp-pay { width: 40.83px; height: 28px; border: .6px solid #d9d9d9; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 5px 7px; }
+  .scmp-pay i { display: block; width: 100%; height: 100%; }
+  .scmp-pay.amex { background: #1f72cd; border-color: #1f72cd; }
+
+  /* ---------------- Plus section (SCMP Plus upsell, below hero) ----------------
+     Fonts/sizes verified against Figma node 7:1178. */
+  .scmp-plus { display: flex; flex-direction: column; align-items: center; padding: 0 16px 24px; }
+  .plus-card {
+    width: 100%; max-width: 1280px;
+    background: #d3dff2; border: 1px solid rgba(69, 133, 255, .2); border-radius: 40px;
+    padding: 40px 16px 16px; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+  }
+  .plus-intro { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 720px; text-align: center; }
+  .plus-title { font-family: var(--serif); font-weight: 400; font-size: 24px; line-height: 1.4; color: #000; margin: 0; }   /* 24 mobile → 28 tablet → 32 desktop */
+  .plus-body { font-family: var(--sans); font-weight: 400; font-size: 16px; line-height: 1.4; color: #222834; }
+  .plus-body b { font-weight: 700; }
+
+  .plus-plans { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; justify-content: center; width: 100%; }
+  .plus-plan { width: 320px; max-width: 100%; background: #fff; border: 1px solid var(--light-action); border-radius: 8px; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .plus-plan-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%; }
+  .plus-plan-name { font-family: var(--sans); font-weight: 700; font-size: 16px; color: #000; }
+  .plus-tag { font-family: var(--cond); font-weight: 700; font-size: 13px; line-height: 1.3; text-transform: uppercase; color: #4585ff; background: #ecf3ff; border: 1px solid #dae7ff; border-radius: 2px; padding: 0 4px; white-space: nowrap; }
+  .plus-price-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+  .plus-price-left { display: flex; align-items: center; gap: 4px; }
+  .plus-price { font-family: var(--serif); font-weight: 700; font-size: 32px; line-height: 1.3; color: #000; }
+  .plus-unit { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; }
+  .plus-strike { font-family: var(--sans); font-weight: 400; font-size: 14px; color: var(--grey500); text-decoration: line-through; }
+  .plus-per { font-family: var(--sans); font-weight: 400; font-size: 14px; color: #000; }
+  .plus-per b { font-weight: 700; }
+  .plus-sub { font-family: var(--cond); font-weight: 700; font-size: 14px; line-height: 1.3; text-transform: uppercase; color: #fff; background: var(--light-action); border: 0; border-radius: 4px; padding: 6px 8px; white-space: nowrap; cursor: text; }
+
+  .plus-bundle { font-family: var(--sans); font-weight: 400; font-size: 16px; line-height: 1.5; text-align: center; color: #000; }
+  .plus-link { color: var(--action); font-weight: 700; text-decoration: underline; }
+
+  .plus-visual { width: 800px; max-width: 100%; }
+  .plus-visual img { display: block; width: 100%; height: auto; }
+
+  /* ================= TABLET  (768–1023) =================
+     Two columns. Font sizes are FIXED (28→ tablet 32); only the column
+     WIDTH is fluid (688→784 content, so text col 296→392), so the copy
+     rewraps line-by-line as the width changes. Text left-aligned. */
+  @container (min-width: 768px) {
+    .scmp-hdr { min-height: 64px; }
+    .scmp-logo-img { height: 17px; }
+    .scmp-hero {
+      --offer: 360px; --gap: 32px;
+      display: grid; grid-template-columns: minmax(0, 1fr) var(--offer); gap: var(--gap);
+      align-items: start;
+      width: clamp(688px, calc(37.6cqw + 399px), 784px);
+      max-width: 100%; margin: 0 auto; padding: 48px 0 40px;
+    }
+    .scmp-text { align-items: flex-start; text-align: left; }
+    .scmp-tagline { font-size: 18px; }
+    .scmp-headline { font-size: 32px; }
+    .scmp-subhead { font-size: 16px; }
+    .plus-card { padding: 48px 40px 16px; }
+    .plus-title { font-size: 28px; }
+  }
+
+  /* ================= DESKTOP (≥1024) =================
+     Font sizes FIXED (headline 40, subhead 18); only the column WIDTH is
+     fluid — content 784→912 (text col 392→480), offer 360→392, gap 32→40 —
+     so the copy rewraps as the width changes. Widths join tablet at 1024. */
+  @container (min-width: 1024px) {
+    .scmp-hdr { min-height: 72px; padding: 0 80px; }
+    .scmp-nav { display: flex; }
+    .scmp-burger { display: none; }
+    .scmp-logo-img { height: 20px; }
+    .scmp-hero {
+      /* Container reaches its 912px cap (the Figma desktop width) by ~1152px
+         and holds it through 1440; offer/gap finish ramping at the same point.
+         Values are continuous with tablet at 1024 (784 content, 392 text col). */
+      --offer: clamp(360px, calc(360px + (100cqw - 1024px) * 0.25), 392px);
+      --gap: clamp(32px, calc(32px + (100cqw - 1024px) * 0.0625), 40px);
+      width: min(calc(100cqw - 240px), 912px);
+      padding: 48px 0 40px;
+    }
+    .scmp-headline { font-size: 40px; }
+    .scmp-tagline { font-size: 18px; }
+    .scmp-subhead { font-size: 18px; }
+    .plus-card { padding: 56px 80px 16px; }
+    .plus-title { font-size: 32px; }
+  }
+</style>
+</head>
+
+<body data-surface="subscription">
+
+  <!-- ===================== TOOLBAR (not captured) ===================== -->
+  <div class="cs-toolbar" data-html2canvas-ignore="true">
+    <div class="cs-brand"><b>SCMP Copy Sandbox</b><span>Subscription page</span></div>
+
+    <div class="cs-group">
+      <div class="cs-seg">
+        <button data-preset="375">Mobile</button>
+        <button data-preset="768">Tablet</button>
+        <button data-preset="1280">Desktop</button>
+        <button data-preset="full">Fit</button>
+      </div>
+      <span class="cs-readout" data-width-readout>—</span>
+    </div>
+
+    <div class="cs-group cs-group--right">
+      <label class="cs-check"><input type="checkbox" data-toggle-warnings checked> Fit warnings</label>
+      <span class="cs-warn-count" data-warn-count>All fit</span>
+      <div class="cs-sep"></div>
+      <button class="cs-btn" data-reset title="Revert all copy back to the original">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+        <span data-reset-label>Reset copy</span>
+      </button>
+      <button class="cs-btn cs-btn--primary" data-download>Download PNG</button>
+    </div>
+  </div>
+
+  <!-- ===================== STAGE ===================== -->
+  <div class="cs-stage" data-stage>
+    <div class="cs-canvas-wrap" data-canvas-wrap>
+      <div class="cs-canvas scmp" data-canvas>
+
+        <!-- header + hero share a subtle gradient backdrop -->
+        <div class="scmp-hero-wrap">
+
+        <!-- header -->
+        <header class="scmp-hdr">
+          <a class="scmp-logo" aria-label="South China Morning Post"><svg class="scmp-logo-img" viewBox="0 0 294 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="South China Morning Post"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 21.0631H26.8605V0.063097H0V21.0631Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M2.44186 18.6212H12.2093V2.50496H2.44186V18.6212Z" fill="#FFCA05"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.6512 18.6212H24.4186V2.50496H14.6512V18.6212Z" fill="#001246"/><path d="M293.519 16.38L293.85 16.7337C292.789 17.9716 291.176 18.8779 289.673 18.8779C287.749 18.8779 286.6 17.9937 286.6 15.5179V8.22317H285.45V7.5158L285.76 7.36106C287.661 6.41053 288.987 5.52632 290.402 3.44843H290.667V7.02948H293.674L293.254 8.22317H290.667V15.4295C290.667 16.4905 291.176 16.9769 292.038 16.9769C292.568 16.9769 293.033 16.7779 293.519 16.38Z" fill="#001246"/><path d="M279.952 18.8779C278.935 18.8779 277.476 18.7011 276.592 18.3474L276.393 14.8105H276.658C277.631 16.579 278.603 18.3032 280.46 18.3032C281.433 18.3032 282.228 17.7947 282.228 16.9105C282.228 15.8937 281.455 15.4074 280.018 14.6558L279.134 14.1916C278.338 13.7716 276.592 12.9095 276.592 10.6105C276.592 8.13475 278.603 6.76422 281.035 6.76422C281.919 6.76422 283.4 6.94106 284.328 7.25054V10.2126H284.063C283.223 8.64317 282.251 7.33896 280.792 7.33896C279.753 7.33896 279.266 7.9358 279.266 8.59896C279.266 9.6158 280.151 10.1242 280.902 10.5221L281.786 10.9863C283.289 11.7821 284.903 12.5558 284.903 14.8326C284.903 17.3526 282.914 18.8779 279.952 18.8779Z" fill="#001246"/><path d="M269.794 18.8779C266.257 18.8779 264.046 16.579 264.046 12.8653C264.046 9.1958 266.345 6.76422 269.838 6.76422C273.375 6.76422 275.585 9.06317 275.585 12.7769C275.585 16.4463 273.286 18.8779 269.794 18.8779ZM269.838 18.3032C271.208 18.3032 271.341 15.8716 271.341 12.8211C271.341 9.90317 271.164 7.33896 269.794 7.33896C268.423 7.33896 268.291 9.77054 268.291 12.8211C268.291 15.739 268.467 18.3032 269.838 18.3032Z" fill="#001246"/><path d="M250.64 2.52001H258.156C262.135 2.52001 264.102 4.37685 264.102 7.16212C264.102 10.3011 262.201 12.3569 258.554 12.3569C257.692 12.3569 256.962 12.1579 256.476 11.9811V15.6063C256.476 17.2421 256.653 18.3474 258.156 18.3474V18.6126H250.64V18.3474C252.143 18.3474 252.232 17.2421 252.232 15.6063V5.52633C252.232 3.89054 252.143 2.78527 250.64 2.78527V2.52001ZM257.625 11.5832C258.863 11.5832 259.858 10.2347 259.858 7.29475C259.858 4.9958 259.173 3.13896 257.515 3.13896H257.316C256.785 3.13896 256.476 3.40422 256.476 3.93475V10.5221C256.476 11.2516 256.785 11.5832 257.625 11.5832Z" fill="#001246"/><path d="M239.074 15.7611H242.832C245.264 15.7611 246.679 16.9769 246.679 18.9221C246.679 21.8842 243.031 23.9179 239.494 23.9179C236.444 23.9179 235.316 22.68 235.316 21.619C235.316 20.2042 236.576 19.6516 237.637 19.3421L238.08 19.2316H238.61C238.367 19.6737 238.234 20.0274 238.234 20.4916C238.234 22.0169 239.45 22.879 241.528 22.879C243.075 22.879 244.313 22.0611 244.313 20.6905C244.313 19.6295 243.584 18.9884 242.103 18.9884H237.947C236.4 18.9884 235.736 18.1263 235.736 16.9326C235.736 15.8053 236.576 14.9874 237.947 14.1916C236.466 13.5726 235.626 12.379 235.626 10.7432C235.626 8.37791 237.483 6.76422 240.401 6.76422C241.263 6.76422 242.014 6.89685 242.655 7.1179L246.679 6.80843L246.259 8.40001L244.313 8.20106C244.866 8.82001 245.153 9.66001 245.153 10.6326C245.153 13.02 243.319 14.6116 240.401 14.6116C239.715 14.6116 239.074 14.5232 238.522 14.3684C238.19 14.6337 238.057 14.7884 238.057 15.12C238.057 15.4737 238.279 15.7611 239.074 15.7611ZM240.401 7.33896C239.207 7.33896 238.986 8.73159 238.986 10.6769C238.986 12.6221 239.207 14.0369 240.401 14.0369C241.594 14.0369 241.793 12.6221 241.793 10.6769C241.793 8.73159 241.594 7.33896 240.401 7.33896Z" fill="#001246"/><path d="M234.026 10.2126V16.1811C234.026 17.5958 234.093 18.3474 234.999 18.3474V18.6126H228.986V18.3474C229.893 18.3474 229.959 17.5958 229.959 16.1811V11.1853C229.959 9.68212 229.782 8.79791 228.544 8.79791C228.146 8.79791 227.572 8.93054 227.085 9.12948V16.1811C227.085 17.5958 227.152 18.3474 228.058 18.3474V18.6126H222.045V18.3474C222.952 18.3474 223.018 17.5958 223.018 16.1811V10.0358C223.018 8.62106 222.642 8.22317 221.891 7.95791V7.69264L226.909 6.80843H227.085V8.51054C228.124 7.5158 229.561 6.76422 231.064 6.76422C233.164 6.76422 234.026 8.00212 234.026 10.2126Z" fill="#001246"/><path d="M218.469 5.57054C217.275 5.57054 216.324 4.62001 216.324 3.42633C216.324 2.27685 217.275 1.32632 218.469 1.32632C219.618 1.32632 220.569 2.27685 220.569 3.42633C220.569 4.62001 219.618 5.57054 218.469 5.57054ZM221.541 18.6126H215.529V18.3474C216.435 18.3474 216.501 17.5958 216.501 16.1811V10.0358C216.501 8.62106 216.126 8.22317 215.374 7.9579V7.69264L220.392 6.80843H220.569V16.1811C220.569 17.5958 220.635 18.3474 221.541 18.3474V18.6126Z" fill="#001246"/><path d="M214.128 10.2126V16.1811C214.128 17.5958 214.195 18.3474 215.101 18.3474V18.6126H209.088V18.3474C209.995 18.3474 210.061 17.5958 210.061 16.1811V11.1853C210.061 9.68212 209.884 8.79791 208.646 8.79791C208.248 8.79791 207.674 8.93054 207.187 9.12948V16.1811C207.187 17.5958 207.254 18.3474 208.16 18.3474V18.6126H202.147V18.3474C203.054 18.3474 203.12 17.5958 203.12 16.1811V10.0358C203.12 8.62106 202.744 8.22317 201.993 7.95791V7.69264L207.01 6.80843H207.187V8.51054C208.226 7.5158 209.663 6.76422 211.166 6.76422C213.266 6.76422 214.128 8.00212 214.128 10.2126Z" fill="#001246"/><path d="M200.962 6.76422C201.249 6.76422 201.559 6.83054 201.89 6.94106L201.117 10.3895H200.896C200.255 9.54948 199.591 9.1958 198.84 9.1958C198.486 9.1958 198.088 9.28422 197.735 9.46106V16.1811C197.735 17.5958 197.801 18.3474 198.707 18.3474V18.6126H192.695V18.3474C193.601 18.3474 193.667 17.5958 193.667 16.1811V10.0358C193.667 8.62106 193.291 8.22317 192.54 7.95791V7.69264L197.558 6.80843H197.735V8.79791C198.707 7.47159 199.746 6.76422 200.962 6.76422Z" fill="#001246"/><path d="M186.25 18.8779C182.714 18.8779 180.503 16.579 180.503 12.8653C180.503 9.1958 182.802 6.76422 186.295 6.76422C189.832 6.76422 192.042 9.06317 192.042 12.7769C192.042 16.4463 189.743 18.8779 186.25 18.8779ZM186.295 18.3032C187.665 18.3032 187.798 15.8716 187.798 12.8211C187.798 9.90317 187.621 7.33896 186.25 7.33896C184.88 7.33896 184.747 9.77054 184.747 12.8211C184.747 15.739 184.924 18.3032 186.295 18.3032Z" fill="#001246"/><path d="M178.442 5.39369L179.016 15.739C179.105 17.3747 179.193 18.3474 180.696 18.3474V18.6126H173.335V18.3474C174.838 18.3474 174.927 17.3747 174.838 15.739L174.242 4.97369L169.776 18.6126H169.246L163.963 4.88527L163.498 13.5284C163.344 16.5126 164.139 18.259 165.422 18.3474V18.6126H161.001V18.3474C162.194 18.2148 162.592 16.4905 162.747 13.5284L163.189 5.08422C163.277 3.51475 162.526 2.96212 161.597 2.78527V2.52001H167.566L171.125 12.1358L174.286 2.52001H180.033V2.78527C178.53 2.9179 178.353 3.7579 178.442 5.39369Z" fill="#001246"/><path d="M157.275 16.7779L157.584 17.0653C157.231 17.6179 156.214 18.8779 154.357 18.8779C152.832 18.8779 152.345 18.06 152.213 17.2863C151.483 18.2369 150.179 18.8779 148.897 18.8779C147.327 18.8779 146.288 17.9495 146.288 16.4463C146.288 14.6337 147.482 13.3737 150.046 12.6663L151.992 12.1358V11.0526C151.992 10.4337 151.992 8.53264 150.024 8.53264C148.698 8.53264 147.659 9.41685 147.084 10.4337L146.642 10.2569C147.372 8.00212 149.427 6.76422 151.903 6.76422C154.423 6.76422 155.926 8.26738 155.926 10.8758V15.739C155.926 16.4684 155.926 17.0653 156.567 17.0653C156.833 17.0653 157.098 16.9547 157.275 16.7779ZM151.174 17.1537C151.439 17.1537 151.726 17.0432 151.992 16.8221V12.7105L151.594 12.8874C150.267 13.4621 149.958 14.0369 149.958 15.3632C149.958 16.6011 150.555 17.1537 151.174 17.1537Z" fill="#001246"/><path d="M145.065 10.2126V16.1811C145.065 17.5958 145.131 18.3474 146.038 18.3474V18.6126H140.025V18.3474C140.931 18.3474 140.998 17.5958 140.998 16.1811V11.1853C140.998 9.68212 140.821 8.79791 139.583 8.79791C139.185 8.79791 138.61 8.93054 138.124 9.12948V16.1811C138.124 17.5958 138.19 18.3474 139.096 18.3474V18.6126H133.084V18.3474C133.99 18.3474 134.056 17.5958 134.056 16.1811V10.0358C134.056 8.62106 133.681 8.22317 132.929 7.95791V7.69264L137.947 6.80843H138.124V8.51054C139.163 7.5158 140.6 6.76422 142.103 6.76422C144.203 6.76422 145.065 8.00212 145.065 10.2126Z" fill="#001246"/><path d="M129.507 5.57054C128.313 5.57054 127.363 4.62001 127.363 3.42633C127.363 2.27685 128.313 1.32632 129.507 1.32632C130.657 1.32632 131.607 2.27685 131.607 3.42633C131.607 4.62001 130.657 5.57054 129.507 5.57054ZM132.58 18.6126H126.567V18.3474C127.473 18.3474 127.54 17.5958 127.54 16.1811V10.0358C127.54 8.62106 127.164 8.22317 126.412 7.9579V7.69264L131.43 6.80843H131.607V16.1811C131.607 17.5958 131.673 18.3474 132.58 18.3474V18.6126Z" fill="#001246"/><path d="M125.166 10.2126V16.1811C125.166 17.5958 125.232 18.3474 126.138 18.3474V18.6126H120.126V18.3474C121.032 18.3474 121.098 17.5958 121.098 16.1811V11.1853C121.098 9.68212 120.921 8.7979 119.684 8.7979C119.286 8.7979 118.711 8.93054 118.225 9.12948V16.1811C118.225 17.5958 118.291 18.3474 119.197 18.3474V18.6126H113.185V18.3474C114.091 18.3474 114.157 17.5958 114.157 16.1811V4.37685C114.157 2.96212 113.781 2.56422 113.03 2.29896V2.03369L118.048 1.32632H118.225V8.51054C119.264 7.5158 120.7 6.76422 122.204 6.76422C124.304 6.76422 125.166 8.00212 125.166 10.2126Z" fill="#001246"/><path d="M107.319 18.8779C102.234 18.8779 99.1397 15.6947 99.1397 10.6105C99.1397 5.68106 102.632 2.25475 107.319 2.25475C109.264 2.25475 111.077 2.87369 112.138 3.40422L112.27 7.71475H112.005C110.878 5.01791 109.529 2.87369 107.23 2.87369C104.489 2.87369 103.649 5.94633 103.649 10.5442C103.649 15.2305 104.71 18.259 107.23 18.259C109.529 18.259 110.944 16.0484 112.359 12.9537H112.624L112.093 17.8611C111.032 18.3032 109.264 18.8779 107.319 18.8779Z" fill="#001246"/><path d="M93.7641 10.2126V16.1811C93.7641 17.5958 93.8304 18.3474 94.7368 18.3474V18.6126H88.7241V18.3474C89.6304 18.3474 89.6967 17.5958 89.6967 16.1811V11.1853C89.6967 9.68212 89.5199 8.7979 88.282 8.7979C87.8841 8.7979 87.3094 8.93054 86.8231 9.12948V16.1811C86.8231 17.5958 86.8894 18.3474 87.7957 18.3474V18.6126H81.7831V18.3474C82.6894 18.3474 82.7557 17.5958 82.7557 16.1811V4.37685C82.7557 2.96212 82.3799 2.56422 81.6283 2.29896V2.03369L86.6462 1.32632H86.8231V8.51054C87.862 7.5158 89.2989 6.76422 90.802 6.76422C92.902 6.76422 93.7641 8.00212 93.7641 10.2126Z" fill="#001246"/><path d="M81.6062 16.38L81.9378 16.7337C80.8767 17.9716 79.2631 18.8779 77.7599 18.8779C75.8367 18.8779 74.6873 17.9937 74.6873 15.5179V8.22317H73.5378V7.5158L73.8473 7.36106C75.7483 6.41053 77.0746 5.52632 78.4894 3.44843H78.7546V7.02948H81.761L81.341 8.22317H78.7546V15.4295C78.7546 16.4905 79.2631 16.9769 80.1252 16.9769C80.6557 16.9769 81.1199 16.7779 81.6062 16.38Z" fill="#001246"/><path d="M72.1179 6.80843V15.6505C72.1179 17.0653 72.4937 17.6842 73.2453 17.9495V18.2147L68.7358 18.8779H68.5589L68.1389 17.0432C67.0779 18.0821 65.6189 18.8779 64.0716 18.8779C61.9716 18.8779 61.1095 17.64 61.1095 15.4295V9.54948C61.1095 8.13475 60.6895 7.60422 59.9379 7.33896V7.07369L65 6.80843H65.1768V14.4569C65.1768 15.96 65.3537 16.8442 66.5916 16.8442C66.9895 16.8442 67.5642 16.7116 68.0505 16.5126V9.54948C68.0505 8.13475 67.6305 7.60422 66.8789 7.33896V7.07369L71.941 6.80843H72.1179Z" fill="#001246"/><path d="M53.8011 18.8779C50.2642 18.8779 48.0537 16.579 48.0537 12.8653C48.0537 9.1958 50.3527 6.76422 53.8453 6.76422C57.3821 6.76422 59.5927 9.06317 59.5927 12.7769C59.5927 16.4463 57.2937 18.8779 53.8011 18.8779ZM53.8453 18.3032C55.2158 18.3032 55.3484 15.8716 55.3484 12.8211C55.3484 9.90317 55.1716 7.33896 53.8011 7.33896C52.4306 7.33896 52.2979 9.77054 52.2979 12.8211C52.2979 15.739 52.4748 18.3032 53.8453 18.3032Z" fill="#001246"/><path d="M41.5194 18.8779C40.2594 18.8779 38.2257 18.5463 37.1204 18.1926L36.9436 13.6611H37.2088C38.4467 16.4463 39.6625 18.259 42.0057 18.259C43.7299 18.259 44.6583 17.2642 44.6583 15.7611C44.6583 14.0147 43.2436 13.2853 41.5194 12.4895L40.3257 11.9369C39.353 11.4947 37.3194 10.4337 37.3194 7.40527C37.3194 4.44317 39.2867 2.25475 42.3152 2.25475C43.5309 2.25475 45.4983 2.60843 46.5594 2.9179V6.58738H46.2941C44.8794 4.1558 43.9067 2.87369 42.072 2.87369C40.5025 2.87369 39.8173 3.82422 39.8173 5.19475C39.8173 6.72001 40.812 7.27264 42.3152 7.95791L43.5088 8.51054C45.4099 9.39475 47.1562 10.4558 47.1562 13.3295C47.1562 16.6011 44.813 18.8779 41.5194 18.8779Z" fill="#001246"/></svg></a>
+          <span class="spacer"></span>
+          <nav class="scmp-nav">
+            <span class="nav-item active editable" data-label="Nav · Overview" data-single>OVERVIEW</span>
+            <span class="nav-item editable" data-label="Nav 2" data-single>SCMP PLUS</span>
+            <span class="nav-item editable" data-label="Nav 3" data-single>BUNDLE PLUS</span>
+            <span class="nav-item editable" data-label="Nav 4" data-single>CORPORATE</span>
+          </nav>
+          <button class="scmp-signin editable" data-label="Sign in" data-single>SIGN IN</button>
+          <span class="scmp-burger"><i></i><i></i><i></i></span>
+        </header>
+
+        <!-- hero -->
+        <section class="scmp-hero">
+          <div class="scmp-text">
+            <p class="scmp-tagline editable" data-label="Tagline" data-maxlen="40" data-maxlines="1" data-single>Trust. Balance. Intelligence.</p>
+            <h1 class="scmp-headline editable" data-label="Headline" data-maxlen="80">Elevate Your Thought on Hong Kong, mainland China, and Asia</h1>
+            <p class="scmp-subhead editable" data-label="Sub-headline" data-maxlen="200">Get sharp analysis and first-hand reporting, built on a century of journalism you can trust.</p>
+          </div>
+
+          <div class="scmp-offer">
+            <div class="scmp-cards">
+              <!-- Monthly -->
+              <div class="scmp-card">
+                <span class="scmp-tag editable" data-label="Monthly · tag" data-maxlen="20" data-single>Just HKD2.5/week</span>
+                <div class="scmp-tier">
+                  <span class="scmp-radio"></span>
+                  <span class="scmp-tier-name editable" data-label="Monthly · name" data-single>Monthly</span>
+                </div>
+                <div class="scmp-price-group">
+                  <div class="scmp-price-row">
+                    <span class="scmp-price editable" data-label="Monthly · price" data-single>10</span>
+                    <span class="scmp-strike editable" data-label="Monthly · was" data-single>85</span>
+                  </div>
+                  <p class="scmp-unit editable" data-label="Monthly · unit" data-single><b>HKD</b>/month</p>
+                  <p class="scmp-fine editable" data-label="Monthly · fine print" data-maxlen="60">for <b>the first 3 months</b>, then HKD85/month</p>
+                </div>
+              </div>
+              <!-- Annual (selected) -->
+              <div class="scmp-card is-selected">
+                <span class="scmp-tag tag--save editable" data-label="Annual · tag" data-maxlen="20" data-single>Save 50%</span>
+                <div class="scmp-tier">
+                  <span class="scmp-radio on"></span>
+                  <span class="scmp-tier-name editable" data-label="Annual · name" data-single>Annual</span>
+                </div>
+                <div class="scmp-price-group">
+                  <div class="scmp-price-row">
+                    <span class="scmp-price editable" data-label="Annual · price" data-single>480</span>
+                    <span class="scmp-strike editable" data-label="Annual · was" data-single>960</span>
+                  </div>
+                  <p class="scmp-unit editable" data-label="Annual · unit" data-single><b>HKD</b>/year</p>
+                  <p class="scmp-fine editable" data-label="Annual · fine print" data-maxlen="60">for the first year</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="scmp-cta"><span class="cta-label editable" data-label="CTA label" data-single>SUBSCRIBE NOW</span><span class="cta-price" data-cta-price></span></div>
+
+            <ul class="scmp-benefits">
+              <li><i class="tick mark-tick"></i><span class="editable" data-label="Benefit 1" data-maxlen="80" data-single>Unlimited access on web and app</span></li>
+              <li><i class="tick mark-tick"></i><span class="editable" data-label="Benefit 2" data-maxlen="80" data-single>Access to archive articles</span></li>
+              <li><i class="tick mark-tick"></i><span class="editable" data-label="Benefit 3" data-maxlen="80" data-single>Listen to articles</span></li>
+            </ul>
+
+            <div class="scmp-pays">
+              <span class="scmp-pay"><i class="mark-visa"></i></span>
+              <span class="scmp-pay"><i class="mark-mastercard"></i></span>
+              <span class="scmp-pay amex"><i class="mark-amex"></i></span>
+              <span class="scmp-pay"><i class="mark-unionpay"></i></span>
+              <span class="scmp-pay"><i class="mark-applepay"></i></span>
+              <span class="scmp-pay"><i class="mark-alipay"></i></span>
+            </div>
+          </div>
+        </section>
+        </div><!-- /scmp-hero-wrap -->
+
+        <!-- Plus section (SCMP Plus upsell) -->
+        <section class="scmp-plus">
+          <div class="plus-card">
+            <div class="plus-intro">
+              <h2 class="plus-title editable" data-label="Plus · heading" data-maxlen="40" data-single>Want deeper China analysis?</h2>
+              <p class="plus-body editable" data-label="Plus · body">Turn information into actionable intelligence. <b>SCMP Plus</b> is designed for business leaders and China watchers who need strategic insights into China's shifting policies and economy. Unlock everything in Standard, plus <b>FactSheets, Daily Pulse, ePaper &amp; more</b></p>
+            </div>
+
+            <div class="plus-plans">
+              <div class="plus-plan">
+                <div class="plus-plan-head">
+                  <span class="plus-plan-name editable" data-label="Plus Monthly · name" data-single>Plus: Monthly</span>
+                  <span class="plus-tag editable" data-label="Plus Monthly · tag" data-single>One month for free</span>
+                </div>
+                <div class="plus-price-row">
+                  <div class="plus-price-left">
+                    <span class="plus-price editable" data-label="Plus Monthly · price" data-single>190</span>
+                    <div class="plus-unit">
+                      <span class="plus-strike editable" data-label="Plus Monthly · was" data-single>261</span>
+                      <span class="plus-per editable" data-label="Plus Monthly · unit" data-single><b>HKD</b>/month</span>
+                    </div>
+                  </div>
+                  <button class="plus-sub editable" data-label="Plus Monthly · button" data-single>Subscribe</button>
+                </div>
+              </div>
+
+              <div class="plus-plan">
+                <div class="plus-plan-head">
+                  <span class="plus-plan-name editable" data-label="Plus Annual · name" data-single>Plus: Annual</span>
+                  <span class="plus-tag editable" data-label="Plus Annual · tag" data-single>One month for free</span>
+                </div>
+                <div class="plus-price-row">
+                  <div class="plus-price-left">
+                    <span class="plus-price editable" data-label="Plus Annual · price" data-single>174</span>
+                    <div class="plus-unit">
+                      <span class="plus-strike editable" data-label="Plus Annual · was" data-single>248</span>
+                      <span class="plus-per editable" data-label="Plus Annual · unit" data-single><b>HKD</b>/month</span>
+                    </div>
+                  </div>
+                  <button class="plus-sub editable" data-label="Plus Annual · button" data-single>Subscribe</button>
+                </div>
+              </div>
+            </div>
+
+            <p class="plus-bundle editable" data-label="Plus · bundle line">Want to have print newspaper included? <a class="plus-link">Click here</a> for bundle plans.</p>
+
+            <div class="plus-visual"><img src="assets/plus-visual.png" alt="SCMP Plus on tablet and mobile" /></div>
+          </div>
+        </section>
+
+      </div><!-- /canvas -->
+      <div class="cs-resize" data-resize data-html2canvas-ignore="true" title="Drag to resize"></div>
+    </div>
+  </div>
+
+  <script src="vendor/html2canvas.min.js"></script>
+  <script src="js/sandbox.js"></script>
+
+  <!-- Subscription-specific behaviour: plan selection + dynamic CTA.
+       Click a plan card (or its radio) to select it; the CTA suffix mirrors
+       the selected plan's price + unit and updates live as they're edited. -->
+  <script>
+  (function () {
+    var canvas = document.querySelector('[data-canvas]');
+    var cards = Array.prototype.slice.call(canvas.querySelectorAll('.scmp-card'));
+    var ctaPrice = canvas.querySelector('[data-cta-price]');
+
+    function updateCTA() {
+      var sel = canvas.querySelector('.scmp-card.is-selected');
+      if (!sel || !ctaPrice) return;
+      var price = (sel.querySelector('.scmp-price').textContent || '').trim();
+      var unit = (sel.querySelector('.scmp-unit').textContent || '').trim(); // e.g. "HKD/year"
+      var suffix = unit.replace(/^\s*HKD\s*/i, '').trim();                    // e.g. "/year"
+      ctaPrice.textContent = ' - HKD' + price + suffix;
+    }
+
+    function selectPlan(card) {
+      cards.forEach(function (c) {
+        var on = c === card;
+        c.classList.toggle('is-selected', on);
+        var radio = c.querySelector('.scmp-radio');
+        if (radio) radio.classList.toggle('on', on);
+      });
+      updateCTA();
+    }
+
+    cards.forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('.editable')) return; // let text edits through
+        selectPlan(card);
+      });
+      // keep the CTA in sync when price/unit change (typing OR Reset copy)
+      ['.scmp-price', '.scmp-unit'].forEach(function (sel) {
+        var el = card.querySelector(sel);
+        if (el) new MutationObserver(updateCTA).observe(el, { childList: true, characterData: true, subtree: true });
+      });
+    });
+
+    updateCTA();
+  })();
+  </script>
+</body>
+</html>
