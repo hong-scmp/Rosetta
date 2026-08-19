@@ -28,7 +28,7 @@ Built from the Figma source `Copy-test-prototype-source`
 | Surface | File | Status |
 |---|---|---|
 | Subscription page | `subscription.html` | ✅ Live |
-| Paywall | _tbd_ | ⏳ Add the Figma frame |
+| Paywall | `paywall.html` | ✅ Live |
 
 ## Run it locally
 

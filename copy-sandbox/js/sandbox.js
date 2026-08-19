@@ -239,6 +239,10 @@
   if (dlBtn) {
     dlBtn.addEventListener("click", function () {
       var w = Math.round(canvas.getBoundingClientRect().width);
+      // Optional [data-export] limits the shot to one element on a transparent
+      // background (e.g. the paywall card alone); default is the whole canvas.
+      var exportEl = document.querySelector("[data-export]") || canvas;
+      var transparent = exportEl !== canvas;
       dlBtn.disabled = true;
       var restoreLabel = dlBtn.textContent;
       dlBtn.textContent = "Rendering…";
@@ -246,8 +250,8 @@
       hideCounter();
 
       var run = function () {
-        html2canvas(canvas, {
-          backgroundColor: "#ffffff",
+        html2canvas(exportEl, {
+          backgroundColor: transparent ? null : "#ffffff",
           scale: 2,
           useCORS: true,
           logging: false,
