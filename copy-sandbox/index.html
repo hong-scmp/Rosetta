@@ -12,9 +12,7 @@
     font-family:"Roboto",system-ui,sans-serif; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
   .wrap { max-width: 720px; width:100%; }
   .head { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
-  .marks { display:inline-flex; gap:2px; }
-  .marks i { width:10px; height:20px; display:block; }
-  .marks i:first-child{ background:var(--marigold);} .marks i:last-child{ background:var(--navy);}
+  .flag { width:30px; height:30px; display:block; flex:0 0 auto; }
   h1 { font-family:"Merriweather",serif; color:var(--navy); font-size:24px; margin:0; }
   .sub { color:var(--muted); font-size:14px; margin:0 0 28px; line-height:1.5; }
   .grid { display:grid; gap:16px; grid-template-columns:1fr 1fr; }
@@ -33,7 +31,7 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="head"><span class="marks"><i></i><i></i></span><h1>Copy Sandbox</h1></div>
+    <div class="head"><img class="flag" src="assets/Flag.svg" alt="" /><h1>Copy Sandbox</h1></div>
     <p class="sub">Live, editable replicas of SCMP subscriber surfaces. Change the price and copy right in the browser, watch it reflow at every screen size, and export a clean PNG for approval decks — no Figma seat needed.</p>
 
     <div class="grid">
