@@ -101,8 +101,11 @@
     var overCount = 0;
     editables.forEach(function (el) {
       var bad = false;
-      // horizontal clip (nowrap elements)
-      if (el.scrollWidth - el.clientWidth > 1) bad = true;
+      // horizontal clip — only meaningful for elements that CAN'T wrap
+      // (a pill / button / price). On wrapping text, content just flows to the
+      // next line, and sub-pixel rounding of line widths caused false positives.
+      var ws = getComputedStyle(el).whiteSpace;
+      if ((ws === "nowrap" || ws === "pre") && el.scrollWidth - el.clientWidth > 2) bad = true;
       // declared max lines
       var ml = parseInt(el.getAttribute("data-maxlines") || "0", 10);
       if (ml && lineCount(el) > ml) bad = true;
