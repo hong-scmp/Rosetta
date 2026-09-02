@@ -3,32 +3,33 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SCMP Copy Sandbox — Paywall</title>
+<title>SCMP Copy Sandbox — Current Paywall</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/sandbox-ui.css" />
 <link rel="stylesheet" href="assets/marks.css" />
 
 <style>
   /* =========================================================
-     Paywall — faithful to Figma "Paywall" (node 67:2420),
-     shown over a faded article. Plan-card sub-component is the
-     same as the subscription page. Responsive via container
-     queries.  Breakpoints: <768 mobile · 768–1023 tablet · ≥1024 desktop
+     Current Paywall — faithful to Figma "Current paywall" (node
+     114:1727). Two-column card (heading + benefits / plan rows +
+     CTA) with marigold accents, over a faded article.
+     Breakpoints: <768 mobile · 768–1023 tablet · ≥1024 desktop
      ========================================================= */
   .pw {
     container-type: inline-size;
     --navy: #001246;
     --marigold: #ffca05;
     --action: #2c4692;
-    --light-action: #556bb4;
+    --dodger: #4585ff;
     --grey250: #cccccc;
     --grey500: #888888;
     --grey700: #666666;
-    --grey800: #404040;
+    --whitetwo: #e5e5e5;
+    --lightgrey: #bbbbbb;
     --serif: "Merriweather", Georgia, "Times New Roman", serif;
     --sans: "Roboto", system-ui, -apple-system, sans-serif;
     --cond: "Roboto Condensed", "Roboto", sans-serif;
@@ -40,7 +41,7 @@
   .pw *, .pw *::before, .pw *::after { box-sizing: border-box; }
   .pw p { margin: 0; }
 
-  /* ---------------- slim reading-mode top bar ---------------- */
+  /* ---------------- slim reading-mode top bar (shared with paywall) ---------------- */
   .pw-top { border-bottom: 1px solid #ededed; }
   .pw-top-inner { display: flex; align-items: center; gap: 16px; min-height: 46px; padding: 0 16px; }
   .pw-logo-img { display: block; height: 15px; width: auto; }
@@ -58,77 +59,69 @@
   .pw-burger i { height: 2px; background: var(--navy); border-radius: 2px; display: block; }
 
   /* ---------------- reading area (article + card + ad) ---------------- */
-  .pw-stage { max-width: 1000px; margin: 0 auto; padding: 28px 0 64px; display: flex; gap: 40px; align-items: flex-start; }  /* mobile: no side padding → card is full-bleed */
+  .pw-stage { max-width: 1120px; margin: 0 auto; padding: 28px 0 64px; display: flex; gap: 40px; align-items: flex-start; }  /* mobile: no side padding → card is full-bleed */
   .pw-main { flex: 1 1 0; min-width: 0; max-width: 480px; margin: 0 auto; position: relative; }  /* mobile content caps at 480, centred */
   .pw-ad { display: none; flex: 0 0 auto; width: 300px; }
   .pw-ad-box { width: 300px; height: 250px; background: #111; color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--cond); letter-spacing: 2px; font-size: 12px; text-transform: uppercase; border-radius: 2px; }
-
-  /* article body text, fading out at the bottom */
   .pw-read { position: relative; padding: 0 16px 8px; }   /* article keeps a 16px inset on mobile */
   .pw-para { font-family: var(--serif); font-weight: 400; font-size: 19px; line-height: 1.6; color: #1a1a1a; }
   .pw-read::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 100%); pointer-events: none; }
 
-  /* ---------------- the paywall card ---------------- */
-  .pw-card {
+  /* ---------------- the current-paywall card ---------------- */
+  .cur-card {
     position: relative; z-index: 2; margin-top: -44px;
     background: #fafafa; border: 1px solid #d7d7d7; border-radius: 16px;
     box-shadow: 0 -2px 4px rgba(0,0,0,.15), 0 10px 34px rgba(0,0,0,.08);
-    padding: 24px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px; overflow: hidden;
+    padding: 32px 16px; overflow: hidden;   /* mobile: 16px content padding */
+    display: flex; flex-direction: column; gap: 24px;   /* mobile: heading, plans+cta, benefits */
   }
-  /* when exporting the card on its own, drop the overlay shadow + overlap so it's a clean asset */
-  body.cs-capturing .pw-card { box-shadow: none; margin-top: 0; }
-  /* access line + heading are centred on mobile, left-aligned from tablet up */
-  .pw-login { font-family: var(--sans); font-size: 13px; color: var(--navy); width: 100%; text-align: center; }
-  .pw-login .pw-login-link { color: var(--light-action); font-weight: 700; text-decoration: none; }
-  .pw-heading { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.25; color: #000; width: 100%; margin: 0; text-align: center; }
+  body.cs-capturing .cur-card { box-shadow: none; margin-top: 0; }
 
-  /* ---- shared plan-card sub-component (same as subscription page) ---- */
-  .scmp-cards { display: flex; gap: 8px; align-items: stretch; width: 100%; }
-  .scmp-card {
-    position: relative; flex: 1 1 0; min-width: 0; cursor: pointer;
-    background: #fff; border: 1px solid var(--grey250); border-radius: 16px;
-    padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px;
-  }
-  .scmp-card.is-selected { border: 3px solid var(--action); }
-  .scmp-tag {
-    align-self: flex-start; margin-left: 0;
-    font-family: var(--cond); font-weight: 700; font-size: 13px; line-height: 1.3;
-    color: #fff; background: var(--light-action);
-    padding: 2px 6px; border-radius: 0 0 4px 4px;
-  }
-  .scmp-tag.tag--save { background: var(--marigold); color: #000; }
-  .scmp-tier { display: flex; align-items: center; gap: 8px; }
-  .scmp-radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--grey500); flex: 0 0 auto; position: relative; cursor: pointer; }
-  .scmp-radio.on { border-color: var(--action); }
-  .scmp-radio.on::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--action); }
-  .scmp-tier-name { font-family: var(--sans); font-weight: 700; font-size: 16px; color: #000; }
-  .scmp-price-group { display: flex; flex-direction: column; gap: 4px; }
-  .scmp-price-row { display: flex; align-items: flex-start; gap: 4px; }
-  .scmp-price { font-family: var(--serif); font-weight: 700; font-size: 40px; line-height: 1; color: #000; }
-  .scmp-strike { font-family: var(--sans); font-weight: 400; font-size: 22px; color: var(--grey500); text-decoration: line-through; margin-top: 6px; }
-  .scmp-unit { font-family: var(--sans); font-size: 14px; line-height: 1.3; color: #000; }
-  .scmp-unit b { font-weight: 700; }
-  .scmp-fine { font-family: var(--sans); font-weight: 400; font-size: 12px; line-height: 1.3; color: var(--grey800); }
-  .scmp-fine b { font-weight: 700; }
+  /* mobile: cur-left "dissolves" so benefits can sit BELOW the plans (order 3) */
+  .cur-left { display: contents; }
+  .cur-intro { order: 1; display: flex; flex-direction: column; gap: 16px; }
+  .cur-plans-col { order: 2; display: flex; flex-direction: column; gap: 12px; }
+  .cur-benefits { order: 3; display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
 
-  /* CTA */
-  .scmp-cta {
+  .cur-login { font-family: var(--sans); font-size: 13px; color: var(--navy); }
+  .cur-login .cur-login-link { color: var(--dodger); font-weight: 700; text-decoration: none; }
+  .cur-heading { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.4; color: var(--navy); margin: 0; }
+
+  .cur-benefits li { display: flex; align-items: flex-start; gap: 8px; }
+  .cur-benefits .cur-tick { width: 15px; height: 15px; flex: 0 0 auto; margin-top: 2px; }
+  .cur-benefits span { font-family: var(--sans); font-size: 14px; line-height: 1.2; color: #000; }
+
+  /* plan rows */
+  .cur-plans { display: flex; flex-direction: column; gap: 8px; }
+  .cur-plan {
+    background: #fff; border: 2px solid var(--whitetwo); border-radius: 8px;
+    padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: pointer;
+  }
+  .cur-plan.is-selected { border-color: var(--marigold); }
+  .cur-plan-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .cur-plan-name { font-family: var(--sans); font-weight: 700; font-size: 16px; line-height: 1; color: #000; }
+  .cur-plan-note { font-family: var(--sans); font-weight: 700; font-style: italic; font-size: 13px; line-height: 1.1; color: var(--dodger); text-align: right; white-space: nowrap; }
+
+  .cur-fee { display: flex; align-items: center; gap: 4px; width: 100%; }
+  .cur-strike { font-family: var(--serif); font-weight: 700; font-size: 24px; color: var(--lightgrey); text-decoration: line-through; }
+  .cur-price { font-family: var(--serif); font-weight: 700; font-size: 32px; line-height: 1; color: #000; }
+  .cur-unit { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 3px; line-height: 1; }
+  .cur-unit .u-hkd { font-family: var(--serif); font-weight: 700; font-size: 12px; color: #000; }
+  .cur-unit .u-per { font-family: var(--serif); font-weight: 400; font-size: 12px; color: #000; opacity: .7; }
+  .cur-radio { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--lightgrey); flex: 0 0 auto; position: relative; cursor: pointer; }
+  .cur-plan.is-selected .cur-radio { background: var(--marigold); border-color: var(--marigold); }
+  .cur-plan.is-selected .cur-radio::after { content: ""; position: absolute; left: 9px; top: 4px; width: 6px; height: 12px; border: solid var(--navy); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+  .cur-plan-fine { font-family: var(--sans); font-weight: 400; font-size: 12px; line-height: 1; color: #000; opacity: .6; }
+
+  .cur-cta {
     width: 100%; border: 0; cursor: default;
-    background: var(--action); color: #fff; border-radius: 8px;
-    font-family: var(--cond); font-weight: 700; text-transform: uppercase;
-    font-size: 16px; letter-spacing: .3px; line-height: 1.4; padding: 12px 16px; text-align: center;
+    background: var(--marigold); color: var(--navy); border-radius: 4px;
+    font-family: var(--sans); font-weight: 700; font-size: 16px; line-height: 1;
+    padding: 16px 24px; text-align: center;
   }
-  .cta-price { pointer-events: none; }
+  .cur-cancel { font-family: var(--sans); font-size: 14px; color: var(--grey700); text-align: center; cursor: text; }
 
-  /* benefits (blue ticks) */
-  .pw-benefits { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; width: 100%; }
-  .pw-benefits li { display: flex; align-items: flex-start; gap: 8px; }
-  .pw-benefits .pw-tick { width: 15px; height: 15px; flex: 0 0 auto; margin-top: 2px; }
-  .pw-benefits span { font-family: var(--sans); font-size: 14px; line-height: 1.2; color: #000; }
-
-  .pw-explore { font-family: var(--sans); font-size: 14px; color: var(--action); text-decoration: underline; text-align: center; cursor: text; }
-
-  /* ================= TABLET (≥768) ================= */
+  /* ================= TABLET + DESKTOP (≥768): two columns ================= */
   @container (min-width: 768px) {
     .pw-top-inner { min-height: 54px; padding: 0 24px; }
     .pw-crumb { display: flex; }
@@ -136,26 +129,30 @@
     .pw-ico { display: inline-block; }
     .pw-stage { padding: 28px 24px 64px; }   /* tablet/desktop: side padding back */
     .pw-read { padding-inline: 0; }
-    .pw-main { max-width: 658px; margin: 0; }   /* tablet/desktop: back to the wide reading column */
-    .pw-heading { font-size: 28px; }
-    .pw-login, .pw-heading { text-align: left; }
-    .pw-card { padding: 32px 24px; }
+    .pw-main { max-width: 750px; margin: 0; }   /* tablet/desktop: back to the wide reading column */
+
+    /* two real columns; the left one is a natural flex column so the
+       heading → bullets gap is exactly 32px, independent of the plans height */
+    .cur-card { flex-direction: row; gap: 16px; align-items: flex-start; padding: 32px 24px; }
+    .cur-left { display: flex; flex-direction: column; gap: 32px; flex: 1 1 0; min-width: 0; }
+    .cur-intro { order: 0; }
+    .cur-plans-col { order: 0; flex: 1 1 0; min-width: 0; }
+    .cur-benefits { order: 0; }
   }
 
   /* ================= DESKTOP (≥1024) ================= */
   @container (min-width: 1024px) {
     .pw-ad { display: block; }
     .pw-stage { padding: 40px 24px 80px; }
-    .pw-card { padding: 32px; }
   }
 </style>
 </head>
 
-<body data-surface="paywall">
+<body data-surface="current-paywall">
 
   <!-- ===================== TOOLBAR (not captured) ===================== -->
   <div class="cs-toolbar" data-html2canvas-ignore="true">
-    <div class="cs-brand"><b>SCMP Copy Sandbox</b><span>Paywall</span></div>
+    <div class="cs-brand"><b>SCMP Copy Sandbox</b><span>Current Paywall</span></div>
 
     <div class="cs-group">
       <div class="cs-seg">
@@ -211,55 +208,62 @@
               <p class="pw-para">Sources said that the woman, a 48-year-old government social worker with no record of mental illness, had argued with her daughter about “education problems” at 7.45am on Wednesday at their 19th-floor home in Taikoo Shing. The woman returned to her bedroom and jumped to her death at around 9am.</p>
             </div>
 
-            <!-- the paywall card (Download PNG captures just this, transparent bg) -->
-            <div class="pw-card" data-export>
-              <p class="pw-login editable" data-label="Access line"><span>Subscribe or </span><a class="pw-login-link">LOG IN</a><span> to access this article</span></p>
-              <h1 class="pw-heading editable" data-label="Heading" data-maxlen="100">Unlock unique perspectives, global understanding and unparalleled expertise.</h1>
-
-              <div class="scmp-cards">
-                <!-- Monthly -->
-                <div class="scmp-card">
-                  <span class="scmp-tag editable" data-label="Monthly · tag" data-maxlen="20" data-single>Just HKD2.5/week</span>
-                  <div class="scmp-tier">
-                    <span class="scmp-radio"></span>
-                    <span class="scmp-tier-name editable" data-label="Monthly · name" data-single>Monthly</span>
-                  </div>
-                  <div class="scmp-price-group">
-                    <div class="scmp-price-row">
-                      <span class="scmp-price editable" data-label="Monthly · price" data-single>10</span>
-                      <span class="scmp-strike editable" data-label="Monthly · was" data-single>85</span>
-                    </div>
-                    <p class="scmp-unit editable" data-label="Monthly · unit" data-single><b>HKD</b>/month</p>
-                    <p class="scmp-fine editable" data-label="Monthly · fine print" data-maxlen="70"><b>for the first 3 months</b>, then HKD85/month</p>
-                  </div>
-                </div>
-                <!-- Annual (selected) -->
-                <div class="scmp-card is-selected">
-                  <span class="scmp-tag tag--save editable" data-label="Annual · tag" data-maxlen="20" data-single>Save HKD480</span>
-                  <div class="scmp-tier">
-                    <span class="scmp-radio on"></span>
-                    <span class="scmp-tier-name editable" data-label="Annual · name" data-single>Annual</span>
-                  </div>
-                  <div class="scmp-price-group">
-                    <div class="scmp-price-row">
-                      <span class="scmp-price editable" data-label="Annual · price" data-single>480</span>
-                      <span class="scmp-strike editable" data-label="Annual · was" data-single>960</span>
-                    </div>
-                    <p class="scmp-unit editable" data-label="Annual · unit" data-single><b>HKD</b>/year</p>
-                    <p class="scmp-fine editable" data-label="Annual · fine print" data-maxlen="70">Billed as HKD480 for the first year</p>
-                  </div>
-                </div>
+            <!-- the current-paywall card (Download PNG captures just this, transparent bg) -->
+            <div class="cur-card" data-export>
+              <div class="cur-left">
+              <div class="cur-intro">
+                <p class="cur-login editable" data-label="Access line"><span>Subscribe or </span><a class="cur-login-link">LOG IN</a><span> to access this article</span></p>
+                <h1 class="cur-heading editable" data-label="Heading" data-maxlen="70">Know Asia inside out. Subscribe to read more.</h1>
               </div>
 
-              <div class="scmp-cta"><span class="cta-label editable" data-label="CTA label" data-single>SUBSCRIBE NOW</span><span class="cta-price" data-cta-price></span></div>
-
-              <ul class="pw-benefits">
-                <li><svg class="pw-tick" viewBox="0 0 16.5 16.5" aria-hidden="true"><path d="M15.5819 2.25L16.5 3.18746L6.10507 13.7978L5.63993 14.25L0 8.4932L0.918083 7.55572L5.65113 12.3869L15.5819 2.25Z" fill="#2c4692"/></svg><span class="editable" data-label="Benefit 1" data-maxlen="90">Access to unrivalled coverage and breaking news on SCMP.com and the app</span></li>
-                <li><svg class="pw-tick" viewBox="0 0 16.5 16.5" aria-hidden="true"><path d="M15.5819 2.25L16.5 3.18746L6.10507 13.7978L5.63993 14.25L0 8.4932L0.918083 7.55572L5.65113 12.3869L15.5819 2.25Z" fill="#2c4692"/></svg><span class="editable" data-label="Benefit 2" data-maxlen="90">Unlock exclusive newsletters for unique expert commentary</span></li>
-                <li><svg class="pw-tick" viewBox="0 0 16.5 16.5" aria-hidden="true"><path d="M15.5819 2.25L16.5 3.18746L6.10507 13.7978L5.63993 14.25L0 8.4932L0.918083 7.55572L5.65113 12.3869L15.5819 2.25Z" fill="#2c4692"/></svg><span class="editable" data-label="Benefit 3" data-maxlen="90">Listen to our reporting anytime, anywhere</span></li>
+              <ul class="cur-benefits">
+                <li><svg class="cur-tick" viewBox="0 0 16.5 16.5" aria-hidden="true"><path d="M15.5819 2.25L16.5 3.18746L6.10507 13.7978L5.63993 14.25L0 8.4932L0.918083 7.55572L5.65113 12.3869L15.5819 2.25Z" fill="#4585ff"/></svg><span class="editable" data-label="Benefit 1" data-maxlen="90">In-depth reporting on Hong Kong, mainland China and Asia</span></li>
+                <li><svg class="cur-tick" viewBox="0 0 16.5 16.5" aria-hidden="true"><path d="M15.5819 2.25L16.5 3.18746L6.10507 13.7978L5.63993 14.25L0 8.4932L0.918083 7.55572L5.65113 12.3869L15.5819 2.25Z" fill="#4585ff"/></svg><span class="editable" data-label="Benefit 2" data-maxlen="90">Expert commentary and exclusive newsletters</span></li>
+                <li><svg class="cur-tick" viewBox="0 0 16.5 16.5" aria-hidden="true"><path d="M15.5819 2.25L16.5 3.18746L6.10507 13.7978L5.63993 14.25L0 8.4932L0.918083 7.55572L5.65113 12.3869L15.5819 2.25Z" fill="#4585ff"/></svg><span class="editable" data-label="Benefit 3" data-maxlen="90">Unlimited access on web and app</span></li>
               </ul>
+              </div><!-- /cur-left -->
 
-              <a class="pw-explore editable" data-label="Explore plans link" data-single>Explore plans</a>
+              <div class="cur-plans-col">
+                <div class="cur-plans">
+                  <!-- Monthly -->
+                  <div class="cur-plan">
+                    <div class="cur-plan-head">
+                      <span class="cur-plan-name editable" data-label="Monthly · name" data-single>Standard: Monthly</span>
+                      <span class="cur-plan-note editable" data-label="Monthly · note" data-maxlen="24" data-single>Cancel anytime</span>
+                    </div>
+                    <div class="cur-fee">
+                      <span class="cur-strike editable" data-label="Monthly · was" data-single>85</span>
+                      <span class="cur-price editable" data-label="Monthly · price" data-single>45</span>
+                      <span class="cur-unit">
+                        <span class="u-hkd editable" data-label="Monthly · currency" data-single>HKD</span>
+                        <span class="u-per editable" data-label="Monthly · period" data-single>for the first month</span>
+                      </span>
+                      <span class="cur-radio"></span>
+                    </div>
+                    <p class="cur-plan-fine editable" data-label="Monthly · fine print" data-maxlen="60">Then HKD85/month.</p>
+                  </div>
+                  <!-- Annual (selected) -->
+                  <div class="cur-plan is-selected">
+                    <div class="cur-plan-head">
+                      <span class="cur-plan-name editable" data-label="Annual · name" data-single>Standard: Annual</span>
+                      <span class="cur-plan-note editable" data-label="Annual · note" data-maxlen="24" data-single>30-Day money back</span>
+                    </div>
+                    <div class="cur-fee">
+                      <span class="cur-strike editable" data-label="Annual · was" data-single>80</span>
+                      <span class="cur-price editable" data-label="Annual · price" data-single>40</span>
+                      <span class="cur-unit">
+                        <span class="u-hkd editable" data-label="Annual · currency" data-single>HKD</span>
+                        <span class="u-per editable" data-label="Annual · period" data-single>/month</span>
+                      </span>
+                      <span class="cur-radio"></span>
+                    </div>
+                    <p class="cur-plan-fine editable" data-label="Annual · fine print" data-maxlen="70">Billed as HKD480 (Save HKD480) for the first year.</p>
+                  </div>
+                </div>
+
+                <button class="cur-cta editable" data-label="CTA button" data-single>SUBSCRIBE</button>
+                <p class="cur-cancel editable" data-label="Cancel line" data-single>Cancel anytime</p>
+              </div>
             </div>
           </div>
 
@@ -275,41 +279,17 @@
   <script src="js/analytics.js"></script>
   <script src="js/sandbox.js"></script>
 
-  <!-- plan selection + dynamic CTA (same behaviour as the subscription page) -->
+  <!-- plan selection (toggle marigold border + tick; no dynamic CTA on this design) -->
   <script>
   (function () {
     var canvas = document.querySelector('[data-canvas]');
-    var cards = Array.prototype.slice.call(canvas.querySelectorAll('.scmp-card'));
-    var ctaPrice = canvas.querySelector('[data-cta-price]');
-
-    function updateCTA() {
-      var sel = canvas.querySelector('.scmp-card.is-selected');
-      if (!sel || !ctaPrice) return;
-      var price = (sel.querySelector('.scmp-price').textContent || '').trim();
-      var unit = (sel.querySelector('.scmp-unit').textContent || '').trim();
-      var suffix = unit.replace(/^\s*HKD\s*/i, '').trim();
-      ctaPrice.textContent = ' - HKD' + price + suffix;
-    }
-    function selectPlan(card) {
-      cards.forEach(function (c) {
-        var on = c === card;
-        c.classList.toggle('is-selected', on);
-        var radio = c.querySelector('.scmp-radio');
-        if (radio) radio.classList.toggle('on', on);
-      });
-      updateCTA();
-    }
-    cards.forEach(function (card) {
-      card.addEventListener('click', function (e) {
+    var plans = Array.prototype.slice.call(canvas.querySelectorAll('.cur-plan'));
+    plans.forEach(function (plan) {
+      plan.addEventListener('click', function (e) {
         if (e.target.closest('.editable')) return;
-        selectPlan(card);
-      });
-      ['.scmp-price', '.scmp-unit'].forEach(function (sel) {
-        var el = card.querySelector(sel);
-        if (el) new MutationObserver(updateCTA).observe(el, { childList: true, characterData: true, subtree: true });
+        plans.forEach(function (p) { p.classList.toggle('is-selected', p === plan); });
       });
     });
-    updateCTA();
   })();
   </script>
 </body>

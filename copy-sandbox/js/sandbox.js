@@ -18,6 +18,7 @@
   var body = document.body;
   var SURFACE = body.getAttribute("data-surface") || "surface";
   var STORE_KEY = "scmp-copy-sandbox:" + SURFACE;
+  var trackedEdit = false; // fire the "someone edited" event only once per visit
 
   var canvas = document.querySelector("[data-canvas]");
   var wrap = document.querySelector("[data-canvas-wrap]");
@@ -127,6 +128,7 @@
     el.addEventListener("focus", function () { showCounter(el); });
     el.addEventListener("blur", function () { hideCounter(); saveAll(); evaluateFit(); });
     el.addEventListener("input", function () {
+      if (!trackedEdit) { trackedEdit = true; if (window.csTrack) window.csTrack("edit-" + SURFACE); }
       if (counterFor === el) renderCounter(el);
       evaluateFit();
     });
@@ -263,6 +265,7 @@
           a.download = "scmp-" + SURFACE + "-" + w + "px.png";
           a.href = cnv.toDataURL("image/png");
           a.click();
+          if (window.csTrack) window.csTrack("png-" + SURFACE);
         }).catch(function (err) {
           alert("Sorry — export failed: " + err.message);
         }).then(function () {

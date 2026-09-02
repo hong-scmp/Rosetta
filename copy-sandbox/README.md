@@ -29,6 +29,7 @@ Built from the Figma source `Copy-test-prototype-source`
 |---|---|---|
 | Subscription page | `subscription.html` | ✅ Live |
 | Paywall | `paywall.html` | ✅ Live |
+| Current Paywall | `current-paywall.html` | ✅ Live |
 
 ## Run it locally
 
@@ -53,6 +54,23 @@ The folder is fully static, so you can publish it as-is:
 > The PNG export must run from a **hosted or served** page (http/https), not a
 > `file://` double-click — browsers block downloads and image reads from
 > `file://`. Locally, use the `node server.js` command above.
+
+## Usage analytics (optional)
+
+Tracking is wired but **off by default**. To turn it on:
+
+1. Sign up free at <https://www.goatcounter.com/> and pick a code (e.g. `scmp-copy-sandbox`).
+2. In [`js/analytics.js`](js/analytics.js), set `GC_ENDPOINT` to
+   `https://<your-code>.goatcounter.com/count`.
+3. Commit & push.
+
+It's privacy-friendly and cookie-free (no consent banner). You'll get page
+visits per surface, plus custom **events** under Dashboard → Events:
+
+- `edit-subscription` / `edit-paywall` — someone actually edited copy
+- `png-subscription` / `png-paywall` — someone downloaded a PNG
+
+Those two events are the real "people used it" signal, beyond raw visits.
 
 ## Project structure
 
